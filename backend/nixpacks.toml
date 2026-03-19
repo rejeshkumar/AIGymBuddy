@@ -1,0 +1,9 @@
+# Railway uses Nixpacks when no Dockerfile. This configures the build.
+[phases.setup]
+nixPkgs = ["python311", "tesseract", "mupdf"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "python init_db.py 2>/dev/null || true && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"
