@@ -62,3 +62,4 @@ flutter run
 - [ ] Health Report OCR + Insights
 - [ ] Progress + Streaks
 - [ ] Groups + Leaderboard
+# AIGymBuddy
