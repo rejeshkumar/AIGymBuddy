@@ -63,3 +63,4 @@ flutter run
 - [ ] Progress + Streaks
 - [ ] Groups + Leaderboard
 # AIGymBuddy
+# AIGymBuddy
