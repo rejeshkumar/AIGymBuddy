@@ -93,7 +93,8 @@ class AuthProvider with ChangeNotifier {
     double? weight,
     String goal = 'general',
   }) async {
-    final result = await ApiService().signup(
+    _lastError = null;
+    final (result, errMsg) = await ApiService().signupWithError(
       email: email,
       password: password,
       age: age,
@@ -104,6 +105,8 @@ class AuthProvider with ChangeNotifier {
     if (result != null && result['id'] != null) {
       return await login(email, password);
     }
+    _lastError = errMsg ?? 'Signup failed. Please try again.';
+    notifyListeners();
     return false;
   }
 

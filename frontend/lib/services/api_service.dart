@@ -69,7 +69,8 @@ class ApiService {
     return result;
   }
 
-  Future<Map<String, dynamic>?> signup({
+  /// Returns (result, errorMessage). Use for signup error display.
+  Future<(Map<String, dynamic>?, String?)> signupWithError({
     required String email,
     required String password,
     int? age,
@@ -92,14 +93,40 @@ class ApiService {
             headers: _headers(),
             body: body,
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
-        return jsonDecode(response.body) as Map<String, dynamic>;
+        return (jsonDecode(response.body) as Map<String, dynamic>, null);
       }
-      return null;
-    } catch (_) {
-      return null;
+      String errMsg = 'Signup failed';
+      try {
+        final err = jsonDecode(response.body);
+        if (err is Map && err['detail'] != null) {
+          errMsg = err['detail'] is String ? err['detail'] : err['detail'].toString();
+        }
+      } catch (_) {}
+      return (null, errMsg);
+    } catch (e) {
+      return (null, 'Cannot reach server. Check connection or try again.');
     }
+  }
+
+  Future<Map<String, dynamic>?> signup({
+    required String email,
+    required String password,
+    int? age,
+    double? height,
+    double? weight,
+    String goal = 'general',
+  }) async {
+    final (result, _) = await signupWithError(
+      email: email,
+      password: password,
+      age: age,
+      height: height,
+      weight: weight,
+      goal: goal,
+    );
+    return result;
   }
 
   Future<Map<String, dynamic>?> getMe(String token) async {

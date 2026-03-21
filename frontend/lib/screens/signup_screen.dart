@@ -50,7 +50,8 @@ class _SignupScreenState extends State<SignupScreen> {
     if (success) {
       Navigator.pop(context);
     } else {
-      setState(() => _error = 'This email is already registered. Try signing in.');
+      final auth = context.read<AuthProvider>();
+      setState(() => _error = auth.lastError ?? 'Signup failed. Please try again.');
     }
   }
 
