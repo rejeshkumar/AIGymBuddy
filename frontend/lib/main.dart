@@ -18,6 +18,7 @@ class AiGymBuddyApp extends StatelessWidget {
       create: (_) => AuthProvider(),
       child: MaterialApp(
         title: 'AI GYM Buddy',
+        locale: const Locale('en', 'US'),
         theme: _buildAppTheme(Brightness.light),
         darkTheme: _buildAppTheme(Brightness.dark),
         themeMode: ThemeMode.dark,
