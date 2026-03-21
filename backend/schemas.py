@@ -110,3 +110,10 @@ class HealthReportResponse(BaseModel):
     hba1c: Optional[float] = None
     cholesterol: Optional[float] = None
     raw_text: Optional[str] = None
+
+
+class BodyScanResponse(BaseModel):
+    """Body scan analysis - image is NOT stored. Suggestions based on user goal."""
+    areas_of_improvement: List[str]
+    suggested_exercises: List[str]
+    suggested_nutrition: List[str]

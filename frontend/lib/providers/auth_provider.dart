@@ -52,13 +52,15 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> login(String email, String password) async {
     _lastError = null;
-    final result = await ApiService().login(email, password);
-    if (result == null || result['access_token'] == null) {
-      _lastError = 'Invalid email or password. Please try again.';
-      notifyListeners();
-      return false;
-    }
-    {
+    try {
+      final (result, errType) = await ApiService().loginWithError(email, password);
+      if (result == null || result['access_token'] == null) {
+        _lastError = errType == 'network'
+            ? 'Cannot reach server. The backend may be sleeping (wait 60s and retry) or check your connection.'
+            : 'Invalid email or password. Please try again.';
+        notifyListeners();
+        return false;
+      }
       _token = result['access_token'] as String;
       final (user, err) = await ApiService().getMeWithError(_token!);
       if (user == null) {
@@ -74,6 +76,12 @@ class AuthProvider with ChangeNotifier {
       await prefs.setString(_keyToken, _token!);
       notifyListeners();
       return true;
+    } catch (e, st) {
+      _token = null;
+      _lastError = 'Something went wrong. Please try again.';
+      if (kDebugMode) debugPrint('Login error: $e\n$st');
+      notifyListeners();
+      return false;
     }
   }
 

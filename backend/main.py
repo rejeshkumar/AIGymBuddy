@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -10,11 +11,19 @@ from config import CORS_ORIGINS, DEBUG
 app = FastAPI(title="AI GYM Buddy API", version="0.1.0")
 
 # CORS: CORS_ORIGINS env for production; localhost allowed for dev
-_origins = CORS_ORIGINS if CORS_ORIGINS else ["http://localhost", "http://127.0.0.1"]
+# When CORS_ORIGINS is "*", also allow Vercel and common hosts
+_origins = list(CORS_ORIGINS) if CORS_ORIGINS else ["http://localhost", "http://127.0.0.1"]
+_allow_all = "*" in [o.strip() for o in (os.getenv("CORS_ORIGINS", "") or "").split(",")]
+if _allow_all:
+    _origins = list(set(_origins + ["https://aigymbuddy.vercel.app"]))
+    _origin_regex = r"https?://(localhost|127\.0\.0\.1)(:\d+)?$|https://[a-z0-9-]+\.vercel\.app$"
+else:
+    _origin_regex = r"https?://(localhost|127\.0\.0\.1)(:\d+)?$"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
-    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

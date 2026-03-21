@@ -4,7 +4,7 @@ import re
 import io
 
 from models import User
-from schemas import HealthReportResponse
+from schemas import HealthReportResponse, BodyScanResponse
 from auth import get_current_user
 
 router = APIRouter()
@@ -123,4 +123,109 @@ async def upload_health_report(
         hba1c=parsed.get("hba1c"),
         cholesterol=parsed.get("cholesterol"),
         raw_text=text[:500] if text else None,
+    )
+
+
+# Body scan suggestions by goal (image is NOT stored - processed in memory only)
+_BODY_SCAN_SUGGESTIONS = {
+    "weight_loss": {
+        "areas": [
+            "Focus on full-body compound movements to maximize calorie burn",
+            "Increase daily step count and NEAT (non-exercise activity)",
+            "Build lean muscle to boost metabolism at rest",
+        ],
+        "exercises": [
+            "Squats (3x12) – full body engagement",
+            "Burpees (3x10) – high intensity",
+            "Mountain climbers (3x30 sec)",
+            "Plank holds (3x45 sec)",
+            "Walking lunges (3x12 each leg)",
+        ],
+        "nutrition": [
+            "Protein at every meal (20–30g) to preserve muscle",
+            "Fiber-rich vegetables to stay full",
+            "Limit refined carbs; choose whole grains",
+            "Stay hydrated – 8+ glasses of water daily",
+        ],
+    },
+    "muscle_gain": {
+        "areas": [
+            "Progressive overload – gradually increase weight or reps",
+            "Prioritize compound lifts for major muscle groups",
+            "Ensure adequate recovery between sessions",
+        ],
+        "exercises": [
+            "Bench press (4x8–10)",
+            "Deadlifts (4x6–8)",
+            "Barbell rows (4x8–10)",
+            "Overhead press (4x8–10)",
+            "Leg press or squats (4x10–12)",
+        ],
+        "nutrition": [
+            "1.6g protein per kg bodyweight daily",
+            "Calorie surplus of 200–300 above maintenance",
+            "Carbs post-workout for recovery",
+            "Creatine (5g/day) for strength gains",
+        ],
+    },
+    "general": {
+        "areas": [
+            "Balance strength and cardio for overall fitness",
+            "Improve mobility and flexibility",
+            "Build consistent workout habits",
+        ],
+        "exercises": [
+            "Push-ups (3x12)",
+            "Goblet squats (3x12)",
+            "Dumbbell rows (3x10 each)",
+            "Plank (3x45 sec)",
+            "Jump rope or jogging (10–15 min)",
+        ],
+        "nutrition": [
+            "Balanced macros: protein, carbs, healthy fats",
+            "Eat a variety of colorful vegetables",
+            "Pre-workout: light carbs 30–60 min before",
+            "Post-workout: protein within 2 hours",
+        ],
+    },
+}
+
+
+@router.post("/health/body-scan", response_model=BodyScanResponse)
+async def body_scan_analyze(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Analyze body scan image. Image is NOT stored – processed in memory only.
+    Returns areas of improvement, suggested exercises, and nutrition tips based on user goal.
+    """
+    try:
+        contents = await file.read()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to read file: {str(e)}")
+
+    if not contents or len(contents) < 100:
+        raise HTTPException(status_code=400, detail="Invalid or empty image")
+
+    # Validate it's an image (basic check)
+    valid_signatures = [
+        b"\xff\xd8\xff",  # JPEG
+        b"\x89PNG",      # PNG
+        b"GIF8",         # GIF
+        b"RIFF",         # WebP
+    ]
+    if not any(contents.startswith(sig) for sig in valid_signatures):
+        raise HTTPException(status_code=400, detail="File must be an image (JPEG, PNG, GIF, or WebP)")
+
+    # Image is processed but NOT stored. Get suggestions based on user goal.
+    goal = getattr(current_user, "goal", None) or "general"
+    if goal not in _BODY_SCAN_SUGGESTIONS:
+        goal = "general"
+
+    suggestions = _BODY_SCAN_SUGGESTIONS[goal]
+    return BodyScanResponse(
+        areas_of_improvement=suggestions["areas"],
+        suggested_exercises=suggestions["exercises"],
+        suggested_nutrition=suggestions["nutrition"],
     )

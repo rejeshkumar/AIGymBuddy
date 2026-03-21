@@ -18,8 +18,12 @@ def main():
         user = db.query(User).filter(User.email == email).first()
         if user:
             user.role = "admin"
+            if password and len(password) >= 6:
+                user.password = get_password_hash(password)
+                print(f"User {email} promoted to admin. Password updated.")
+            else:
+                print(f"User {email} promoted to admin. (Pass a password to reset it.)")
             db.commit()
-            print(f"User {email} promoted to admin.")
         else:
             if not password or len(password) < 6:
                 print("New user requires password (min 6 chars)")

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../config/api_config.dart';
@@ -44,7 +45,8 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>?> login(String email, String password) async {
+  /// Returns (data, errorType). errorType: 'network' | 'invalid' | null
+  Future<(Map<String, dynamic>?, String?)> loginWithError(String email, String password) async {
     try {
       final response = await http
           .post(
@@ -52,14 +54,19 @@ class ApiService {
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'username=${Uri.encodeComponent(email)}&password=${Uri.encodeComponent(password)}',
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
-        return jsonDecode(response.body) as Map<String, dynamic>;
+        return (jsonDecode(response.body) as Map<String, dynamic>, null);
       }
-      return null;
+      return (null, response.statusCode == 401 ? 'invalid' : 'network');
     } catch (_) {
-      return null;
+      return (null, 'network');
     }
+  }
+
+  Future<Map<String, dynamic>?> login(String email, String password) async {
+    final (result, _) = await loginWithError(email, password);
+    return result;
   }
 
   Future<Map<String, dynamic>?> signup({
@@ -235,6 +242,38 @@ class ApiService {
       return null;
     } catch (_) {
       return null;
+    }
+  }
+
+  /// Body scan - analyze image (NOT stored). Returns areas of improvement, exercises, nutrition.
+  Future<(Map<String, dynamic>?, String?)> bodyScan(String token, Uint8List bytes, {String filename = 'body_scan.jpg'}) async {
+    try {
+      final uri = Uri.parse('$baseUrl/api/health/body-scan').replace(
+        queryParameters: {'token': token},
+      );
+      final request = http.MultipartRequest('POST', uri);
+      request.headers['Authorization'] = 'Bearer $token';
+      request.headers['X-Auth-Token'] = token;
+      request.files.add(http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: filename,
+      ));
+      final streamed = await request.send().timeout(const Duration(seconds: 30));
+      final response = await http.Response.fromStream(streamed);
+      if (response.statusCode == 200) {
+        return (jsonDecode(response.body) as Map<String, dynamic>, null);
+      }
+      String errMsg = '${response.statusCode}';
+      try {
+        final err = jsonDecode(response.body);
+        if (err is Map && err['detail'] != null) {
+          errMsg = err['detail'] is String ? err['detail'] : err['detail'].toString();
+        }
+      } catch (_) {}
+      return (null, errMsg);
+    } catch (e) {
+      return (null, e.toString());
     }
   }
 
