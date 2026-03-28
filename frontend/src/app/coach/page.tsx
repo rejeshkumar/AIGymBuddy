@@ -123,7 +123,7 @@ export default function CoachPage() {
               )}
             </div>
             <button onClick={isCoaching ? stopCoaching : startCoaching}
-              style={{ padding:'12px 16px', borderRadius:14, border:'none', cursor:'pointer', fontFamily:'DM Sans,sans-serif', fontWeight:600, fontSize:13, transition:'all 0.2s',
+              style={{ padding:'12px 16px', borderRadius:14, cursor:'pointer', fontFamily:'DM Sans,sans-serif', fontWeight:600, fontSize:13, transition:'all 0.2s',
                 background: isCoaching ? 'rgba(255,71,87,0.15)' : 'var(--accent)',
                 color: isCoaching ? 'var(--danger)' : '#060608',
                 border: isCoaching ? '1px solid rgba(255,71,87,0.3)' : 'none' } as any}>
