@@ -11,8 +11,7 @@ from core.database import get_db
 SECRET_KEY = os.getenv("SECRET_KEY", "forge-secret")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 168
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__max_password_len=1024)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer()
 
 def hash_password(password: str) -> str:
