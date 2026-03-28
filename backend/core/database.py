@@ -2,10 +2,16 @@ import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://forge:forge123@localhost:5432/forgedb"
-).replace("postgresql://", "postgresql+asyncpg://")
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+
+# Fix URL scheme - Railway provides postgresql://, we need postgresql+asyncpg://
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+
+if not DATABASE_URL:
+    DATABASE_URL = "postgresql+asyncpg://forge:forge123@localhost:5432/forgedb"
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
