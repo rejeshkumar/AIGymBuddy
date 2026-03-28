@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FORGE — Deploy Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#060608;color:#f4f4f8;font-family:'DM Sans',sans-serif;padding:24px;max-width:700px;margin:0 auto;line-height:1.6;}
+h1{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:#e8ff47;letter-spacing:3px;margin-bottom:4px;}
+.tagline{color:#6b6b7a;font-size:14px;margin-bottom:16px;}
+.stack-row{display:flex;gap:8px;margin-bottom:36px;flex-wrap:wrap;}
+.pill{background:#0e0e12;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:5px 12px;font-size:12px;color:#9090a0;}
+.pill span{color:#f4f4f8;font-weight:500;}
+.phase{margin-bottom:28px;}
+.plabel{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#47ffb8;font-weight:600;margin-bottom:8px;}
+.ptitle{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.pnum{width:32px;height:32px;border-radius:50%;background:#e8ff47;color:#060608;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.step{background:#0e0e12;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:8px;}
+.sh{display:flex;gap:10px;margin-bottom:6px;}
+.si{font-size:16px;flex-shrink:0;}
+.st{font-size:13px;font-weight:500;}
+.sd{font-size:12px;color:#9090a0;margin-top:1px;}
+.fr{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#060608;border:1px solid rgba(255,255,255,0.07);border-radius:7px;margin-top:5px;gap:8px;}
+.fk{font-size:11px;color:#6b6b7a;flex-shrink:0;}
+.fv{font-family:'DM Mono',monospace;font-size:11px;color:#e8ff47;text-align:right;word-break:break-all;}
+.fv.g{color:#47ffb8;}.fv.m{color:#9090a0;}
+.cmd{background:#060608;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 70px 10px 12px;font-family:'DM Mono',monospace;font-size:11px;color:#e8ff47;margin-top:6px;cursor:pointer;position:relative;transition:all 0.2s;word-break:break-all;}
+.cmd:hover{border-color:#e8ff47;}
+.clabel{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:9px;color:#6b6b7a;font-family:'DM Sans',sans-serif;}
+.note{background:rgba(232,255,71,0.05);border:1px solid rgba(232,255,71,0.15);border-radius:8px;padding:11px 13px;margin:10px 0;font-size:12px;color:#9090a0;line-height:1.7;}
+.note strong{color:#f4f4f8;}
+.note.g{background:rgba(71,255,184,0.05);border-color:rgba(71,255,184,0.15);}
+.divider{height:1px;background:rgba(255,255,255,0.06);margin:24px 0;}
+.cr{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;gap:10px;}
+.cr:last-child{border-bottom:none;}
+.cl{flex:1;color:#9090a0;}
+.badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+.bf{background:rgba(71,255,184,0.1);color:#47ffb8;border:1px solid rgba(71,255,184,0.2);}
+.bp{background:rgba(255,107,53,0.1);color:#ff6b35;border:1px solid rgba(255,107,53,0.2);}
+.bg{background:rgba(232,255,71,0.1);color:#e8ff47;border:1px solid rgba(232,255,71,0.2);}
+.tr{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tr:last-child{border-bottom:none;}
+.tq{font-size:13px;font-weight:500;margin-bottom:3px;}
+.ta{font-size:12px;color:#6b6b7a;line-height:1.6;}
+.sbox{background:rgba(71,255,184,0.05);border:1px solid rgba(71,255,184,0.2);border-radius:16px;padding:24px;text-align:center;margin-top:28px;}
+.stitle{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#47ffb8;margin:10px 0 8px;}
+.sdesc{color:#6b6b7a;font-size:13px;line-height:1.8;}
+</style>
+</head>
+<body>
+<h1>FORGE</h1>
+<div class="tagline">Deploy guide — Railway + Vercel · ~15 minutes total</div>
+<div class="stack-row">
+  <div class="pill">🚂 <span>Railway</span> backend</div>
+  <div class="pill">▲ <span>Vercel</span> frontend</div>
+  <div class="pill">🤖 <span>Claude AI</span> powered</div>
+  <div class="pill">💰 <span>Free</span> to start</div>
+</div>
+
+<div class="phase">
+<div class="plabel">Why Railway</div>
+<div class="step">
+  <div class="cr"><div class="cl">No sleep on free tier</div><div class="badge bg">Railway ✓</div></div>
+  <div class="cr"><div class="cl">PostgreSQL built in</div><div class="badge bg">Railway ✓</div></div>
+  <div class="cr"><div class="cl">$5 free credit/month</div><div class="badge bf">Free to start</div></div>
+  <div class="cr"><div class="cl">Deploy speed</div><div class="badge bg">~60 seconds</div></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Before you start</div>
+<div class="ptitle"><div class="pnum">0</div>Create 3 free accounts</div>
+<div class="step">
+  <div class="sh"><div class="si">🤖</div><div><div class="st">Anthropic API Key — the AI brain</div><div class="sd">Powers all AI features</div></div></div>
+  <div class="fr"><span class="fk">Go to</span><span class="fv g">console.anthropic.com</span></div>
+  <div class="fr"><span class="fk">Action</span><span class="fv m">Sign up → API Keys → Create → Copy</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">🚂</div><div><div class="st">Railway account</div><div class="sd">Hosts your backend server + database</div></div></div>
+  <div class="fr"><span class="fk">Go to</span><span class="fv g">railway.app → Sign up with GitHub</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">▲</div><div><div class="st">Vercel account</div><div class="sd">Hosts your web app — free forever</div></div></div>
+  <div class="fr"><span class="fk">Go to</span><span class="fv g">vercel.com → Sign up with GitHub</span></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Step 1 — 3 minutes</div>
+<div class="ptitle"><div class="pnum">1</div>Push code to GitHub</div>
+<div class="note"><strong>Open Terminal:</strong> Press Cmd+Space → type Terminal → press Enter. Run each command below and press Enter.</div>
+<div class="step">
+  <div class="sh"><div class="si">📂</div><div><div class="st">Clone your repo to Desktop</div></div></div>
+  <div class="cmd" onclick="cm(this)">cd ~/Desktop && git clone https://github.com/rejeshkumar/AIGymBuddy.git && cd AIGymBuddy<span class="clabel">tap to copy</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">📦</div><div><div class="st">Copy FORGE files in</div><div class="sd">Unzip forge-app.zip → open the forge/ folder → select all → copy → paste into your AIGymBuddy Desktop folder</div></div></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">⬆️</div><div><div class="st">Push to GitHub</div></div></div>
+  <div class="cmd" onclick="cm(this)">git add . && git commit -m "Add FORGE app" && git push<span class="clabel">tap to copy</span></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Step 2 — 5 minutes</div>
+<div class="ptitle"><div class="pnum">2</div>Deploy backend on Railway</div>
+<div class="step">
+  <div class="sh"><div class="si">🚂</div><div><div class="st">Create new project</div><div class="sd">Railway dashboard → New Project → Deploy from GitHub</div></div></div>
+  <div class="fr"><span class="fk">Select repo</span><span class="fv m">AIGymBuddy</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">⚙️</div><div><div class="st">Configure the service</div><div class="sd">Click on the service card → Settings tab</div></div></div>
+  <div class="fr"><span class="fk">Root Directory</span><span class="fv">backend</span></div>
+  <div class="fr"><span class="fk">Build Command</span><span class="fv">pip install -r requirements.txt</span></div>
+  <div class="fr"><span class="fk">Start Command</span><span class="fv">uvicorn main:app --host 0.0.0.0 --port $PORT</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">🗄️</div><div><div class="st">Add PostgreSQL database</div><div class="sd">In your Railway project → + New → Database → Add PostgreSQL</div></div></div>
+  <div class="fr"><span class="fk">Then</span><span class="fv m">Click PostgreSQL → Variables → copy DATABASE_URL</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">🔑</div><div><div class="st">Add Environment Variables</div><div class="sd">Click backend service → Variables tab → add these 3</div></div></div>
+  <div class="fr"><span class="fk">ANTHROPIC_API_KEY</span><span class="fv">sk-ant-your-key-here</span></div>
+  <div class="fr"><span class="fk">SECRET_KEY</span><span class="fv">forge-change-this-random-string</span></div>
+  <div class="fr"><span class="fk">DATABASE_URL</span><span class="fv m">paste from PostgreSQL (edit below)</span></div>
+  <div class="note"><strong>Critical:</strong> In DATABASE_URL change <strong style="color:#e8ff47">postgresql://</strong> → <strong style="color:#47ffb8">postgresql+asyncpg://</strong><br/>Just edit the very beginning of the URL.</div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">🌐</div><div><div class="st">Get your public URL</div><div class="sd">Service → Settings → Networking → Generate Domain</div></div></div>
+  <div class="fr"><span class="fk">URL looks like</span><span class="fv g">forge-backend-xyz.up.railway.app</span></div>
+  <div class="fr"><span class="fk">Test in browser</span><span class="fv m">Should show: {"status":"FORGE API running"}</span></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Step 3 — 3 minutes</div>
+<div class="ptitle"><div class="pnum">3</div>Deploy frontend on Vercel</div>
+<div class="step">
+  <div class="sh"><div class="si">▲</div><div><div class="st">Import repo</div><div class="sd">vercel.com → New Project → Import AIGymBuddy</div></div></div>
+  <div class="fr"><span class="fk">Framework</span><span class="fv g">Next.js (auto-detected)</span></div>
+  <div class="fr"><span class="fk">Root Directory</span><span class="fv">frontend</span></div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">🔑</div><div><div class="st">Add Environment Variable</div><div class="sd">Expand "Environment Variables" before clicking Deploy</div></div></div>
+  <div class="fr"><span class="fk">Name</span><span class="fv">NEXT_PUBLIC_API_URL</span></div>
+  <div class="fr"><span class="fk">Value</span><span class="fv g">https://YOUR-RAILWAY-URL.up.railway.app</span></div>
+  <div class="note">Replace with your actual Railway URL from Step 2 — no trailing slash at the end.</div>
+</div>
+<div class="step">
+  <div class="sh"><div class="si">🚀</div><div><div class="st">Deploy — you're live!</div></div></div>
+  <div class="fr"><span class="fk">Your app</span><span class="fv g">https://forge-web.vercel.app</span></div>
+  <div class="fr"><span class="fk">Phone install</span><span class="fv m">Safari → Share → Add to Home Screen</span></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Step 4</div>
+<div class="ptitle"><div class="pnum">4</div>Test everything</div>
+<div class="step">
+  <div class="fr"><span class="fk">✅</span><span class="fv m">Create account → complete onboarding</span></div>
+  <div class="fr"><span class="fk">✅</span><span class="fv m">Workout → Generate AI Workout (should take ~5 sec)</span></div>
+  <div class="fr"><span class="fk">✅</span><span class="fv m">Coach → type a message → AI replies</span></div>
+  <div class="fr"><span class="fk">✅</span><span class="fv m">Health → add vitals → AI insights appear</span></div>
+  <div class="fr"><span class="fk">✅</span><span class="fv m">Home → log your weight</span></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Costs</div>
+<div class="ptitle"><div class="pnum">💰</div>Running costs</div>
+<div class="step">
+  <div class="cr"><div class="cl">Vercel frontend</div><div class="badge bf">Free forever</div></div>
+  <div class="cr"><div class="cl">Railway free credit/month</div><div class="badge bf">$5 free</div></div>
+  <div class="cr"><div class="cl">Railway after free credit (~50 users)</div><div class="badge bp">$5–10/month</div></div>
+  <div class="cr"><div class="cl">Anthropic API per workout</div><div class="badge bp">~₹0.80</div></div>
+  <div class="cr"><div class="cl">Total for 100 daily users</div><div class="badge bp">~₹1,500/month</div></div>
+</div>
+</div>
+
+<div class="divider"/>
+
+<div class="phase">
+<div class="plabel">Troubleshooting</div>
+<div class="ptitle"><div class="pnum">🔧</div>If something breaks</div>
+<div class="step">
+  <div class="tr"><div class="tq">❌ Workout generation fails</div><div class="ta">Railway → backend service → Variables → check ANTHROPIC_API_KEY has no spaces and starts with sk-ant-</div></div>
+  <div class="tr"><div class="tq">❌ "Cannot connect to server"</div><div class="ta">Vercel → Settings → Environment Variables → NEXT_PUBLIC_API_URL must exactly match your Railway URL</div></div>
+  <div class="tr"><div class="tq">❌ Database error on startup</div><div class="ta">DATABASE_URL must start with postgresql+asyncpg:// not postgresql:// — edit in Railway variables and redeploy</div></div>
+  <div class="tr"><div class="tq">❌ Railway deploy fails</div><div class="ta">Check Root Directory is set to "backend" in Railway service settings</div></div>
+  <div class="tr"><div class="tq">❌ Vercel build fails</div><div class="ta">Check Root Directory is set to "frontend" in Vercel project settings</div></div>
+</div>
+</div>
+
+<div class="sbox">
+  <div style="font-size:36px">⚡</div>
+  <div class="stitle">FORGE is live.</div>
+  <div class="sdesc">Share your Vercel link with gym members today.<br/>Every workout is real Claude AI. Every coaching session has full context.<br/><br/><strong style="color:#f4f4f8">Next: get 10 real users → collect feedback → come back to Claude for Phase 2.</strong></div>
+</div>
+
+<script>
+function cm(el){
+  const t=Array.from(el.childNodes).filter(n=>n.nodeType===3).map(n=>n.textContent).join('').trim()
+  navigator.clipboard.writeText(t).catch(()=>{})
+  const l=el.querySelector('.clabel')
+  if(l){l.textContent='copied!';setTimeout(()=>l.textContent='tap to copy',1500)}
+  el.style.borderColor='#47ffb8';setTimeout(()=>el.style.borderColor='',1000)
+}
+</script>
+</body>
+</html>
