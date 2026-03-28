@@ -11,14 +11,14 @@ from core.database import get_db
 SECRET_KEY = os.getenv("SECRET_KEY", "forge-secret")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 168
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 bearer_scheme = HTTPBearer()
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password[:71])
+    return pwd_context.hash(password)
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain[:71], hashed)
+    return pwd_context.verify(plain, hashed)
 
 def create_token(user_id: str) -> str:
     expire = datetime.utcnow() + timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
