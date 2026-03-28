@@ -4,7 +4,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 
-# Fix URL scheme - Railway provides postgresql://, we need postgresql+asyncpg://
 if DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL.startswith("postgres://"):
@@ -26,4 +25,6 @@ async def get_db():
 async def create_tables():
     async with engine.begin() as conn:
         from models import user, workout, health_record, weight_log
+        # Drop all old tables first, then recreate fresh
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
