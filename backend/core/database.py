@@ -1,6 +1,7 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import text
 
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 
@@ -24,7 +25,11 @@ async def get_db():
 
 async def create_tables():
     async with engine.begin() as conn:
+        # Nuclear option: drop everything and start fresh
+        await conn.execute(text("DROP TABLE IF EXISTS health_records CASCADE"))
+        await conn.execute(text("DROP TABLE IF EXISTS weight_logs CASCADE"))
+        await conn.execute(text("DROP TABLE IF EXISTS workouts CASCADE"))
+        await conn.execute(text("DROP TABLE IF EXISTS users CASCADE"))
+        
         from models import user, workout, health_record, weight_log
-        # Drop all old tables first, then recreate fresh
-        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
